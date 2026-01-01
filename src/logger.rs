@@ -8,8 +8,8 @@ unsafe extern "C" { fn __android_log_print(prio: i32, tag: *const u8, fmt: *cons
 macro_rules! platform_print { ($level:expr, $tag:expr, $msg: expr) => { unsafe { __android_log_print(($level as i32 - 7) * -1, std::ffi::CString::new($tag).unwrap().as_ptr() as *const u8, std::ffi::CString::new($msg).unwrap().as_ptr() as *const u8); } }; }
 #[cfg(any(target_os = "windows", target_os = "linux"))]
 macro_rules! platform_print { ($level:expr, $tag:expr, $msg: expr) => { println!("[{}] [{}]: {}\n\0", $tag, $level, $msg) }; }
-pub struct SimpleLogger { pub file: OnceLock<Mutex<File>>, pub buffer: Mutex<VecDeque<(String, String)>>, pub is_levi_launcher: OnceLock<bool> }
-pub static LOGGER: SimpleLogger = SimpleLogger { file: OnceLock::new(), buffer: Mutex::new(VecDeque::new()), is_levi_launcher: OnceLock::new() };
+pub struct SimpleLogger { pub file: OnceLock<Mutex<File>>, pub buffer: Mutex<VecDeque<(String, String)>>,}
+pub static LOGGER: SimpleLogger = SimpleLogger { file: OnceLock::new(), buffer: Mutex::new(VecDeque::new())};
 
 impl Log for SimpleLogger {
     fn enabled(&self, metadata: &Metadata) -> bool { metadata.level() <= Level::Debug }
@@ -19,7 +19,7 @@ impl Log for SimpleLogger {
 
         let duration = SystemTime::now().duration_since(UNIX_EPOCH).unwrap_or_default();
         let timestamp = format!("{:02}:{:02}:{:02}.{:03}", (duration.as_secs() / 3600) % 24, (duration.as_secs() / 60) % 60, duration.as_secs() % 60, duration.subsec_millis());
-        let tag = if *self.is_levi_launcher.get().unwrap_or(&false) { "LeviLogger" } else { "BuildLimitChanger" };
+        let tag = "BuildLimitChanger";
         let msg_less = record.args().to_string();
         let msg = format!("[{timestamp}] [{}] {}\n", record.level(), msg_less);
 
@@ -48,15 +48,14 @@ impl Log for SimpleLogger {
     fn flush(&self) {}
 }
 
-pub fn init_log_file(is_levi_launcher: bool) {
-    LOGGER.is_levi_launcher.set(is_levi_launcher).expect("Logger flag already set");
+pub fn init_log_file() {
     if let Some(path) = config::log_path() {
         path.parent().map(|p| std::fs::create_dir_all(p).ok());
         LOGGER.file.set(Mutex::new(OpenOptions::new().create(true).append(true).open(&path).expect("Failed to open log file"))).expect("Logger file already set");
         if let (Some(fm), Ok(mut buf)) = (LOGGER.file.get(), LOGGER.buffer.lock()) {
             while let Some((msg, msg_less)) = buf.pop_front() {
                 let _ = fm.lock().unwrap().write_all(msg.as_bytes());
-                platform_print!(Level::Debug, if is_levi_launcher { "LeviLogger" } else { "BuildLimitChanger" }, msg_less);
+                platform_print!(Level::Debug, "BuildLimitChanger", msg_less);
             }
         }
         log::info!("\n    Logs: {}\n    Config: {}", path.display(), config_path().unwrap().display());

@@ -49,7 +49,7 @@ fn find_water_mob_cap_and_fn_starts(data: &[u8]) -> (Option<usize>, Vec<usize>) 
         let mut instruction = Instruction::default();
 
         const TARGET_IMMEDIATE: u64 = 0x42100000;
-        const TARGET_IMMEDIATE2: u64 = 0x40000000;
+        const TARGET_IMMEDIATE2: u64 = 0x41000000;
         let mut lastTarget: u64 = 0;
         while decoder.can_decode() {
             decoder.decode_out(&mut instruction);
@@ -65,7 +65,7 @@ fn find_water_mob_cap_and_fn_starts(data: &[u8]) -> (Option<usize>, Vec<usize>) 
                     }
                     let current = instruction.try_immediate(1).unwrap_or(0);
                     let is_target = matches!(current, TARGET_IMMEDIATE | TARGET_IMMEDIATE2);
-                    if is_target && lastTarget != current {
+                    if is_target && lastTarget != current && !(lastTarget == 0 && current == TARGET_IMMEDIATE2) {
                         lastTarget = current;
                         let addr = instruction.ip() as usize;
                         if let Some(prev) = last_possible_water_mob_cap {
@@ -85,6 +85,9 @@ fn find_water_mob_cap_and_fn_starts(data: &[u8]) -> (Option<usize>, Vec<usize>) 
                 }
                 _ => {}
             }
+        }
+        if water_mob_cap.is_none() && last_possible_water_mob_cap.is_some() {
+            water_mob_cap = Some(last_possible_water_mob_cap.unwrap())
         }
     }
 
@@ -123,7 +126,7 @@ fn main() {
 #[no_mangle]
 pub extern "C" fn mod_init() {
     config::init_config(&mut String::from("/data/data/com.mojang.minecraftpe"));
-    logger::init_log_file(false);
+    logger::init_log_file();
     init();
 }
 
@@ -131,8 +134,13 @@ pub extern "C" fn mod_init() {
 #[no_mangle]
 pub extern "system" fn JNI_OnLoad(vm: jni::JavaVM, _: *mut core::ffi::c_void) -> i32 {
     let mut env = vm.get_env().expect("Cannot get reference to the JNIEnv");
-    config::init_config(&mut utils::get_config_directory(&mut env).expect("Failed to get a valid config directory"));
-    logger::init_log_file(utils::is_levi_launcher(&mut env));
+    let mut dir = match utils::get_config_directory(&mut env) {
+        Some(v) => v,
+        None => return jni::sys::JNI_VERSION_1_6,
+    };
+
+    config::init_config(&mut dir);
+    logger::init_log_file();
     init();
     return jni::sys::JNI_VERSION_1_6;
 }

@@ -1,4 +1,4 @@
-use std::{fs::{self, File}, io::ErrorKind, path::Path, error::Error};
+use std::error::Error;
 
 pub fn combine_hex(max: i16, min: i16) -> i32 { 
     ((max as i32) << 16) | (min as u16 as i32)
@@ -6,22 +6,6 @@ pub fn combine_hex(max: i16, min: i16) -> i32 {
 
 pub fn split_hex(combined: i32) -> (i16, i16) {
     ((combined >> 16) as i16, (combined & 0xFFFF) as i16)
-}
-
-pub fn is_dir_writable(dir: &str) -> bool {
-    let path = Path::new(dir);
-    if let Err(e) = fs::create_dir_all(path) { 
-        if e.kind() != ErrorKind::AlreadyExists { return false; }
-    }
-    let test_path = path.join("._perm_test");
-    match File::create(&test_path) {
-        Ok(file) => {
-            drop(file);
-            let _ = fs::remove_file(&test_path);
-            true
-        }
-        Err(_) => false,
-    }
 }
 
 pub fn find_max_less_than(data: &[usize], target: usize) -> Option<usize> {
@@ -177,10 +161,6 @@ pub use android_specific::*;
 #[cfg(target_os = "android")]
 mod android_specific {
     use jni::{objects::{GlobalRef, JObject, JString}, JNIEnv};
-    
-    pub fn is_levi_launcher(env: &mut JNIEnv) -> bool {
-        get_global_context(env).and_then(|context| get_package_name(env, &context.as_obj())).map_or(false, |name| name == "org.levimc.launcher")
-    }
 
     pub fn get_games_directory(env: &mut JNIEnv) -> Option<String> {
         let env_class = env.find_class("android/os/Environment").ok()?;
@@ -221,17 +201,5 @@ mod android_specific {
             .call_method(file_obj, "getAbsolutePath", "()Ljava/lang/String;", &[])
             .ok()?.l().ok()?;
         env.get_string(&JString::from(abs_path)).ok().map(|s| s.into())
-    }
-
-    fn get_package_name(env: &mut JNIEnv, context: &JObject) -> Option<String> {
-        let jstr = env
-            .call_method(context, "getPackageName", "()Ljava/lang/String;", &[])
-            .ok()?.l().ok()?;
-        
-        if env.exception_check().unwrap_or(false) {
-            let _ = env.exception_clear();
-            return None;
-        }
-        env.get_string(&JString::from(jstr)).ok().map(|s| s.into())
     }
 }

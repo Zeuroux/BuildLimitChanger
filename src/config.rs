@@ -1,4 +1,3 @@
-use crate::utils::is_dir_writable;
 use serde::{Deserialize, Serialize};
 use std::{collections::HashMap, fs, path::{Path, PathBuf}, sync::OnceLock};
 
@@ -54,11 +53,8 @@ pub fn load() -> BuildLimitMap {
     })
 }
 
-pub fn init_config(path: &mut String) {    
+pub fn init_config(path: &mut String) { 
     path.push_str("/BuildLimitChanger/");
-    if !is_dir_writable(&path) { 
-        return log::error!("Config directory not writable: {}", path);
-    }
     set_config_dir(path.clone());
     if !config_path().map_or(false, |p| p.exists()) { save().ok(); }
 }
