@@ -117,7 +117,7 @@ fn main() {
     log::set_max_level(log::LevelFilter::Debug);
     #[cfg(any(target_os = "linux", target_os = "windows"))] {
         config::init_config(&mut utils::get_config_directory().expect("Failed to get a valid config directory"));
-        logger::init_log_file(false);
+        logger::init_log_file();
         init(); 
     } 
 }
