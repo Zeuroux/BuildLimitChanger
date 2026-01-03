@@ -4,3 +4,4 @@ Cargo.lock
 build.bat
 inject.bat
 injector/
+build.sh

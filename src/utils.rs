@@ -127,11 +127,13 @@ fn find_text_section_for_target(target: &str) -> Result<TextMapRange, Box<dyn Er
 }
 
 pub fn find_minecraft_text_section() -> Result<TextMapRange, Box<dyn Error>> {
-    #[cfg(target_os = "linux")] {
-        let exe = std::env::current_exe()?.to_string_lossy().into_owned();
-        find_text_section_for_target(&exe).map_err(|_| format!("Can't find executable text section for {exe}").into())
+    #[cfg(any(target_os = "android", target_os = "linux"))] {
+        #[cfg(target_os = "linux")]
+        let bin = std::env::current_exe()?.to_string_lossy().into_owned();
+        #[cfg(target_os = "android")]
+        let bin= "libminecraftpe.so";
+        find_text_section_for_target(&bin).map_err(|e| format!("Can't find executable text section for {bin}: {e}").into())
     }
-    #[cfg(target_os = "android")] { find_text_section_for_target("libminecraftpe.so").map_err(|_| "Can't find text section for libminecraftpe.so".into()) }
     #[cfg(target_os = "windows")] unsafe {
         use windows_sys::Win32::System::{LibraryLoader::GetModuleHandleW, ProcessStatus::{GetModuleInformation, MODULEINFO}, Threading::GetCurrentProcess};
         let h_module = GetModuleHandleW(std::ptr::null());
@@ -154,9 +156,6 @@ pub fn find_minecraft_text_section() -> Result<TextMapRange, Box<dyn Error>> {
         Ok(TextMapRange { start: text_addr, size: text_size })
     }
 }
-
-#[cfg(target_os = "android")]
-pub use android_specific::*;
 
 #[cfg(target_os = "android")]
 mod android_specific {
@@ -203,3 +202,6 @@ mod android_specific {
         env.get_string(&JString::from(abs_path)).ok().map(|s| s.into())
     }
 }
+
+#[cfg(target_os = "android")]
+pub use android_specific::*;

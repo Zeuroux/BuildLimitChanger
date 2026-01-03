@@ -53,8 +53,23 @@ pub fn load() -> BuildLimitMap {
     })
 }
 
+pub fn is_dir_writable(dir: &str) -> bool {
+    let path = Path::new(dir);
+    if let Err(e) = fs::create_dir_all(path) { 
+        if e.kind() != std::io::ErrorKind::AlreadyExists { return false; }
+    }
+    let test_path = path.join(".test");
+    fs::write(&test_path, "").map(|_| {
+        let _ = fs::remove_file(&test_path);
+        true
+    }).unwrap_or(false)
+}
+
 pub fn init_config(path: &mut String) { 
     path.push_str("/BuildLimitChanger/");
+    if !is_dir_writable(path) {
+        return log::error!("Config directory not writable: {path}");
+    }
     set_config_dir(path.clone());
     if !config_path().map_or(false, |p| p.exists()) { save().ok(); }
 }
