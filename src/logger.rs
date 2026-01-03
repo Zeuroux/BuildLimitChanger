@@ -51,7 +51,8 @@ impl Log for SimpleLogger {
 pub fn init_log_file() {
     if let Some(path) = config::log_path() {
         path.parent().map(|p| std::fs::create_dir_all(p).ok());
-        LOGGER.file.set(Mutex::new(OpenOptions::new().create(true).append(true).open(&path).expect("Failed to open log file"))).expect("Logger file already set");
+        LOGGER.file.set(Mutex::new(OpenOptions::new().create(true).append(true)
+            .open(&path).expect("Failed to open log file"))).expect("Logger file already set");
         if let (Some(fm), Ok(mut buf)) = (LOGGER.file.get(), LOGGER.buffer.lock()) {
             while let Some((msg, msg_less)) = buf.pop_front() {
                 let _ = fm.lock().unwrap().write_all(msg.as_bytes());

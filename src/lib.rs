@@ -28,7 +28,6 @@ fn find_water_mob_cap_and_fn_starts(data: &[u8]) -> (Option<usize>, Vec<usize>) 
                 if !(masked == PATTERNS[1] || masked == LMAO) {
                     continue;
                 }
-                log::debug!("instr {:X}", instr);
                 if let Some(prev) = last_possible_water_mob_cap {
                     let dist = addr.wrapping_sub(prev);
                     if dist < closest_distance {
@@ -105,7 +104,7 @@ fn init() {
         return log::error!("Cannot get the function where water mob cap is located");
     };
     log::debug!("Function Offset: 0x{:X}", function_addr);
-    log::debug!("{:02X?}", &data[function_addr - mcmap.start..(function_addr - mcmap.start + 50).min(data.len())]);
+    // log::debug!("{:02X?}", &data[function_addr - mcmap.start..(function_addr - mcmap.start + 50).min(data.len())]);
     hook::setup_hook(function_addr);
     log::info!("Took: {:?}", time_start.elapsed());
 }

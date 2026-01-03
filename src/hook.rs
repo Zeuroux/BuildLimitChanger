@@ -36,8 +36,6 @@ macro_rules! change_range {
             .collect();
 
         let name = String::from_utf8_lossy(&cleaned).to_string();
-
-        log::info!("{:?}, {:?}", name.as_bytes(), name_bytes);
         use crate::{config, utils::{combine_hex, split_hex}};
         let (max, min) = split_hex(range);
         let (cfg_min, cfg_max) = config::load().get(&name).map(|d| (d.min, d.max)).unwrap_or((min, max));
@@ -48,7 +46,7 @@ macro_rules! change_range {
         *range_address = combine_hex(new_max, new_min);
     };
 }
-#[cfg(target_arch = "aarch64")] // only on android
+#[cfg(target_arch = "aarch64")]
 bhook::hook_fn! {
     fn hook(
         a: *mut std::ffi::c_void, b: *mut std::ffi::c_void,
