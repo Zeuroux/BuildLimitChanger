@@ -1,0 +1,66 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "*"
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        target:
+          - i686-linux-android
+          - x86_64-linux-android
+          - aarch64-linux-android
+          - x86_64-pc-windows-gnu
+          - x86_64-unknown-linux-gnu
+          # - i686-pc-windows-gnu  # still broken
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Rust
+        run: rustup update stable
+      - name: Install cross-compilation tools
+        uses: taiki-e/setup-cross-toolchain-action@v1
+        with:
+          target: ${{ matrix.target }}
+      - name: Build
+        run: cargo build --profile release
+        env:
+          CARGO_PROFILE_RELEASE_LTO: "fat"
+          CARGO_PROFILE_RELEASE_STRIP: "symbols"
+          CARGO_PROFILE_RELEASE_CODEGEN_UNITS: 1
+      - name: Build Changelog
+        id: github_release
+        uses: mikepenz/release-changelog-builder-action@v4
+        with:
+          commitMode: true
+          configurationJson: |
+            {
+              "template": "{{CHANGELOG}}",
+              "commit_template": "- {{message}} ({{hash}})",
+              "categories": [],
+              "sort": {
+                "order": "ASC"
+              }
+            }
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Prepare lib for release
+        run: |
+          if [[ "${{ matrix.target }}" == *"windows"* ]]; then
+            mv target/${{ matrix.target }}/release/BuildLimitChanger.dll BuildLimitChanger_${{ matrix.target }}.dll
+          else
+            mv target/${{ matrix.target }}/release/libBuildLimitChanger.so libBuildLimitChanger_${{ matrix.target }}.so
+          fi
+
+      - name: Create Release
+        uses: mikepenz/action-gh-release@v1
+        with:
+          body: ${{ steps.github_release.outputs.changelog }}
+          files: |
+            BuildLimitChanger_${{ matrix.target }}.dll
+            libBuildLimitChanger_${{ matrix.target }}.so

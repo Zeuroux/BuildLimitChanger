@@ -1,0 +1,76 @@
+name: Crash Report
+description: Report a crash when using BuildLimitChanger
+title: "[Crash] "
+labels: [bug, crash]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting a crash!  
+        Please fill out all the required fields below. Issues without the required info may be closed.
+
+  - type: textarea
+    id: describe-crash
+    attributes:
+      label: Describe the crash
+      description: What happened? When does it occur?
+      placeholder: "Game crashes when..."
+    validations:
+      required: true
+
+  - type: input
+    id: launcher
+    attributes:
+      label: Launcher/Injector used
+      description: "Example: LeviLauncher v1.0.12"
+      placeholder: "LeviLauncher vX.X.X"
+    validations:
+      required: true
+
+  - type: input
+    id: mc-version
+    attributes:
+      label: Minecraft Version
+      description: "Example: 1.21.100, 1.20.101, etc."
+      placeholder: "1.21.100"
+    validations:
+      required: true
+
+  - type: input
+    id: architecture
+    attributes:
+      label: Minecraft Architecture
+      description: "Example: arm64-v8a, armeabi-v7a, x86_64"
+      placeholder: "arm64-v8a"
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      description: Please provide the steps that lead to the crash.
+      placeholder: |
+        1. Open Minecraft
+        2. Join world
+        3. Place block...
+    validations:
+      required: true
+
+  - type: textarea
+    id: attachments
+    attributes:
+      label: Attachments
+      description: |
+        Please attach your **config file** and **log.txt** here.  
+        Both files are located in:
+        ```
+        /storage/emulated/0/games/BuildLimitChanger/
+        ```
+        or
+        ```
+        /storage/emulated/0/Android/data/[minecraft package name]/BuildLimitChanger/
+        ```
+      placeholder: "Drag and drop config + log.txt here"
+    validations:
+      required: true

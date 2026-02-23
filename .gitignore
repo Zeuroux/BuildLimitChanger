@@ -1,0 +1,7 @@
+target/
+Cargo.lock
+.vscode/
+build.bat
+inject.bat
+injector/
+build.sh
