@@ -46,23 +46,7 @@ macro_rules! change_range {
         *range_address = combine_hex(new_max, new_min);
     };
 }
-#[cfg(target_arch = "aarch64")]
-bhook::hook_fn! {
-    fn hook(
-        a: *mut std::ffi::c_void, b: *mut std::ffi::c_void,
-        c1: *mut std::ffi::c_void, c2: *mut std::ffi::c_void, c3: *mut std::ffi::c_void,
-        c4: *mut std::ffi::c_void, c5: *mut std::ffi::c_void, c6: *mut std::ffi::c_void,
-        c7: *mut std::ffi::c_void, c8: *mut std::ffi::c_void, c9: *mut std::ffi::c_void,
-        c10: *mut std::ffi::c_void, c11: *mut std::ffi::c_void, c12: *mut std::ffi::c_void,
-        c13: *mut std::ffi::c_void, c14: *mut std::ffi::c_void, c15: *mut std::ffi::c_void,
-        c16: *mut std::ffi::c_void, c17: *mut std::ffi::c_void, c18: *mut std::ffi::c_void
-    ) -> i64 = {
-        change_range!((b as *mut u8).offset(0x64) as *mut i32);
-        call_original(a, b, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, c15, c16, c17, c18)
-    }
-}
 
-#[cfg(any(target_arch = "x86_64", target_arch = "x86"))]
 bhook::hook_fn! {
     fn hook(a: *mut std::ffi::c_void, b: *mut std::ffi::c_void) -> i64 = {
         #[cfg(target_os = "windows")]
