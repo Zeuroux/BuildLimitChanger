@@ -8,10 +8,12 @@ bhook = { git = "https://github.com/Zeuroux/bhook.git" }
 ctor = "0.6"
 log = "0.4"
 serde = { version = "1.0", features = ["derive"] }
-serde_json = "1.0"
+#serde_json = "1.0"
+soml = "0.2"
 libc = "0.2"
 memchr = "2.8.0"
 elf = "0.8.0"
+indexmap = { version = "2", features = ["serde"] }
 
 [target.'cfg(target_os = "android")'.dependencies]
 jni = "0.21"

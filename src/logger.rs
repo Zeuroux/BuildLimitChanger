@@ -41,9 +41,6 @@ impl Log for SimpleLogger {
         } else if let Ok(mut buf) = self.buffer.lock() {
             buf.push_back((msg, msg_less));
         }
-        if record.level() == Level::Error {
-            panic!("Error: {}", record.args().to_string());
-        }
     }
     fn flush(&self) {}
 }

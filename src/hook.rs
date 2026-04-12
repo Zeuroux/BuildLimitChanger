@@ -1,48 +1,44 @@
-macro_rules! log_dim_change {
-    ($cond:expr, $name:expr, $label:expr, $old:expr, $cfg:expr, $new:expr) => {
-        if $cond { log::warn!("{} Dimension Config {} {} not divisible by 16, aligning to {}", $name, $label, $cfg, $new) }
-        if $old != $new { log::info!("Changing {} Dimension {}: {} to {}", $name, $label, $old, $new) }
-    };
-}
-
-macro_rules! aligned {
-    ($val:expr, $up:expr) => {{
-        let r = $val % 16;
-        if r == 0 { $val } else if $up { $val + (16 - r) } else { $val - r }
-    }};
-}
-
 macro_rules! change_range {
     ($range_addr:expr) => {
         let range_address = $range_addr;
         let range: i32 = std::ptr::read_volatile(range_address);
-        const MAX_NAME_LEN: usize = 15;
-       let mut name_bytes: [u8; MAX_NAME_LEN] = [0; MAX_NAME_LEN];
-        std::ptr::copy_nonoverlapping(
-            (range_address as *const u8).add(4),
-            name_bytes.as_mut_ptr(),
-            MAX_NAME_LEN,
-        );
 
-        let end = name_bytes
-            .iter()
-            .position(|&c| c == 0)
-            .unwrap_or(MAX_NAME_LEN);
+        fn read_c_string(ptr: *const u8) -> Vec<u8> {
+            let mut out = Vec::new();
+            let mut p = ptr;
 
-        let cleaned: Vec<u8> = name_bytes[..end]
-            .iter()
-            .copied()
-            .filter(|b| !b.is_ascii_control())
-            .collect();
+            unsafe {
+                loop {
+                    let b = *p;
+                    if b == 0 {
+                        break;
+                    }
 
-        let name = String::from_utf8_lossy(&cleaned).to_string();
+                    if !b.is_ascii_control() {
+                        out.push(b);
+                    }
+
+                    p = p.add(1);
+                }
+            }
+
+            out
+        }
+        #[cfg(any(target_os = "linux", target_os = "android"))]
+        let name_bytes = read_c_string((range_address as *const u8).add(5));
+        #[cfg(target_os = "windows")]
+        let name_bytes = read_c_string((range_address as *const u8).add(4));
+        let name = String::from_utf8_lossy(&name_bytes).to_string();
+        log::info!("{}", name);
         use crate::{config, utils::{combine_hex, split_hex}};
         let (max, min) = split_hex(range);
-        let (cfg_min, cfg_max) = config::load().get(&name).map(|d| (d.min, d.max)).unwrap_or((min, max));
-        let new_min = aligned!(cfg_min, false);
-        let new_max = aligned!(cfg_max, true);
-        log_dim_change!(cfg_min % 16 != 0, name, "Min", min, cfg_min, new_min);
-        log_dim_change!(cfg_max % 16 != 0, name, "Max", max, cfg_max, new_max);
+        let (new_min, new_max) = config::get(&name, min, max);
+        (min != new_min).then(|| log::info!("Changing {} Dimension Min: {} to {}", name, min, new_min));
+        (max != new_max).then(|| log::info!("Changing {} Dimension Max: {} to {}", name, max, new_max));
+        // let new_min = aligned!(cfg_min, false);
+        // let new_max = aligned!(cfg_max, true);
+        // log_dim_change!(cfg_min % 16 != 0, name, "Min", min, cfg_min, new_min);
+        // log_dim_change!(cfg_max % 16 != 0, name, "Max", max, cfg_max, new_max);
         *range_address = combine_hex(new_max, new_min);
     };
 }

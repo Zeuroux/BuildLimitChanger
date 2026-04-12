@@ -18,10 +18,11 @@ fn init() {
     let str_addr = sections.iter()
         .filter(|s| matches!(s.name.as_str(), ".rodata" | ".rdata" | ".data"))
         .find_map(|s| get_string_addr(s.as_bytes(), STR_VAL, s.addr as u64));
-
+    let mut textstart: usize = 0;
     if let Some(addr) = str_addr {
         log::debug!("Found {} at 0x{:X}", STR_VAL, addr);
-        if let Some(func) = sections.iter().find(|s| s.name == ".text").and_then(|s| find_fn_string_refs(s.as_bytes(), s.addr as u64, addr).ok()) {
+        if let Some(func) = sections.iter().find(|s| s.name == ".text").and_then(|s| {textstart = s.addr; find_fn_string_refs(s.as_bytes(), s.addr as u64, addr).ok()}) {
+            log::info!("func offset from .text: {:x}", func - (textstart as u64));
             hook::setup_hook((func as u64).try_into().unwrap());
         }
     } else {
