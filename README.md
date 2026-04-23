@@ -3,11 +3,9 @@
 A mod to change the build limits of dimensions in Minecraft Bedrock Edition.
 
 ---
-- Use v0.0.5 for versions below 1.21.120 and v0.0.6 for above
-
 ## How To Use
 
-### 🖥️ Windows
+### Windows
 
 #### 1. Download the Latest DLL File
 
@@ -22,13 +20,13 @@ A mod to change the build limits of dimensions in Minecraft Bedrock Edition.
   3. Select the the downloaded dll
   4. Press inject
 
-#### 3. Configuration and Log file location:
+#### 3. Configuration location:
    ```
    %LOCALAPPDATA%/Packages/Microsoft.MinecraftUWP_8wekyb3d8bbwe/RoamingState/BuildLimitChanger/
    ```
 ---
 
-### 📱 Android
+### Android
 
 #### 1. Download the Latest SO File
 
@@ -41,7 +39,7 @@ A mod to change the build limits of dimensions in Minecraft Bedrock Edition.
   2. Tap the file on your file manager and choose to open with LeviLauncher for import.
   3. Launch
 
-#### 3. Configuration and Log file location:
+#### 3. Configuration location:
    ```
    /storage/emulated/0/games/BuildLimitChanger/
    ```
@@ -51,7 +49,7 @@ A mod to change the build limits of dimensions in Minecraft Bedrock Edition.
    ```
 ---
 
-### 🗄️ Server (Windows and Linux)
+### Server (Windows and Linux)
 
 #### 1. Download the Latest Dll (Windows) or SO (Linux) File
 
@@ -61,31 +59,8 @@ A mod to change the build limits of dimensions in Minecraft Bedrock Edition.
 
 - You can use **any DLL injector**, fate injector will work for windows, you can google so injector cuz idk one
 
-#### 3. Configuration and Log file location:
+#### 3. Configuration location:
 
 - same location as the executable file of the server (you'll find BuildLimitChanger folder)
-
-## ⚠️ Important Warning
-
-- Changing **Min Build Limit** will **drastically alter world generation**.  
-- Lowering **Max Build Limit** below the game’s default can also significantly change terrain and structure generation.  
-- Only modify these values in new worlds or after backing up existing saves.
-
-> **Notes**
-> - The default settings match the game’s default height ranges.
-
----
-
-## 🐞 How to Report Crashes / Issues
-
-When opening a **GitHub Issue**, **you must include** the following:
-
-1. **Launcher/Injector used** (e.g., LeviLauncher, other injector name/version)  
-2. **Minecraft version** (e.g., 1.21.100, 1.20.101, etc.)  
-3. **Minecraft architecture** (e.g., `arm64-v8a`, `x86`, `x86_64`)  
-
-**Also attach:**
-- **BuildLimitChanger config file** you used  
-- **`log.txt` file** (located in the same folder as the config)  
 
 ---
