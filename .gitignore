@@ -1,7 +1,5 @@
-target/
-Cargo.lock
-.vscode/
-build.bat
-inject.bat
-injector/
-build.sh
+build/
+out/
+CMakeFiles/
+compile_commands.json
+.vscode
