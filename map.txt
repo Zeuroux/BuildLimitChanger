@@ -1,0 +1,7 @@
+BLC {
+  global:
+    mod_init;
+    JNI_OnLoad;
+  local:
+    *;
+};

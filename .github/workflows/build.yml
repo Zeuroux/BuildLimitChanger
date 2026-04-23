@@ -1,7 +1,16 @@
-name: Ci-Build
+name: Build
 
 on:
   workflow_dispatch:
+    inputs:
+      build_type:
+        description: 'Build type'
+        required: true
+        default: 'Release'
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+  NDK_VERSION: 30.0.14904198
 
 jobs:
   build:
@@ -9,50 +18,70 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - target: i686-linux-android
+          - preset: linux-release
             os: ubuntu-latest
-          - target: x86_64-linux-android
-            os: ubuntu-latest
-          - target: aarch64-linux-android
-            os: ubuntu-latest
-          
-          - target: x86_64-unknown-linux-gnu
-            os: ubuntu-latest
+            name: Linux x86_64
+            binaryDir: build/linux
+            artifactGlob: build/linux/*.so
 
-          - target: x86_64-pc-windows-msvc
+          - preset: android-arm64-release
+            os: ubuntu-latest
+            name: Android arm64
+            binaryDir: build/android-arm64
+            artifactGlob: build/android-arm64/*.so
+
+          - preset: android-x86_64-release
+            os: ubuntu-latest
+            name: Android x86_64
+            binaryDir: build/android-x86_64
+            artifactGlob: build/android-x86_64/*.so
+
+          - preset: windows-release
             os: windows-latest
+            name: Windows MSVC x64
+            binaryDir: build/windows
+            artifactGlob: build/windows/*.dll
 
+    name: ${{ matrix.name }}
     runs-on: ${{ matrix.os }}
-    
+
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
 
-      - name: Setup Rust
-        run: rustup update stable
-
-      - name: Install cross-compilation tools
+      - name: Install Linux dependencies
         if: runner.os == 'Linux'
-        uses: taiki-e/setup-cross-toolchain-action@v1
-        with:
-          target: ${{ matrix.target }} 
+        run: sudo apt-get install -y ninja-build
 
-      - name: Add MSVC Target
+      - name: Install Ninja (Windows)
         if: runner.os == 'Windows'
-        run: rustup target add ${{ matrix.target }}
+        run: choco install ninja --no-progress
+
+      - name: Set up MSVC environment
+        if: matrix.preset == 'windows-release'
+        uses: ilammy/msvc-dev-cmd@v1
+
+      - name: Set up Android SDK
+        if: startsWith(matrix.preset, 'android-')
+        uses: android-actions/setup-android@v3
+
+      - name: Install specific NDK version
+        if: startsWith(matrix.preset, 'android-')
+        run: sdkmanager "ndk;${{ env.NDK_VERSION }}"
+
+      - name: Export NDK_HOME
+        if: startsWith(matrix.preset, 'android-')
+        run: echo "NDK_HOME=$ANDROID_SDK_ROOT/ndk/${{ env.NDK_VERSION }}" >> $GITHUB_ENV
+
+      - name: Configure
+        run: cmake --preset ${{ matrix.preset }}
 
       - name: Build
-        run: cargo build --release --target ${{ matrix.target }}
+        run: cmake --build ${{ matrix.binaryDir }} --config Release
 
-      - name: Upload DLL
-        if: contains(matrix.target, 'windows')
+      - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: BuildLimitChanger-${{ matrix.target }}
-          path: target/${{ matrix.target }}/release/BuildLimitChanger.dll
-
-      - name: Upload SO
-        if: contains(matrix.target, 'android') || contains(matrix.target, 'linux')
-        uses: actions/upload-artifact@v4
-        with:
-          name: BuildLimitChanger-${{ matrix.target }}
-          path: target/${{ matrix.target }}/release/libBuildLimitChanger.so
+          name: ${{ matrix.preset }}
+          path: ${{ matrix.artifactGlob }}
+          if-no-files-found: error

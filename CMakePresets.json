@@ -1,0 +1,125 @@
+{
+    "version": 3,
+    "configurePresets": [
+        {
+            "name": "base",
+            "hidden": true,
+            "generator": "Ninja",
+            "cacheVariables": {
+                "CMAKE_EXPORT_COMPILE_COMMANDS": "ON"
+            }
+        },
+        {
+            "name": "base-debug",
+            "hidden": true,
+            "inherits": "base",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Debug"
+            }
+        },
+        {
+            "name": "base-release",
+            "hidden": true,
+            "inherits": "base",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Release"
+            }
+        },
+        {
+            "name": "android-arm64-debug",
+            "displayName": "Android arm64 Debug",
+            "inherits": "base-debug",
+            "binaryDir": "${sourceDir}/build/android-arm64",
+            "cacheVariables": {
+                "CMAKE_TOOLCHAIN_FILE": "$env{NDK_HOME}/build/cmake/android.toolchain.cmake",
+                "ANDROID_ABI": "arm64-v8a",
+                "ANDROID_PLATFORM": "android-24"
+            }
+        },
+        {
+            "name": "android-arm64-release",
+            "displayName": "Android arm64 Release",
+            "inherits": "base-release",
+            "binaryDir": "${sourceDir}/build/android-arm64",
+            "cacheVariables": {
+                "CMAKE_TOOLCHAIN_FILE": "$env{NDK_HOME}/build/cmake/android.toolchain.cmake",
+                "ANDROID_ABI": "arm64-v8a",
+                "ANDROID_PLATFORM": "android-24"
+            }
+        },
+        {
+            "name": "android-x86_64-debug",
+            "displayName": "Android x86_64 Debug",
+            "inherits": "base-debug",
+            "binaryDir": "${sourceDir}/build/android-x86_64",
+            "cacheVariables": {
+                "CMAKE_TOOLCHAIN_FILE": "$env{NDK_HOME}/build/cmake/android.toolchain.cmake",
+                "ANDROID_ABI": "x86_64",
+                "ANDROID_PLATFORM": "android-24"
+            }
+        },
+        {
+            "name": "android-x86_64-release",
+            "displayName": "Android x86_64 Release",
+            "inherits": "base-release",
+            "binaryDir": "${sourceDir}/build/android-x86_64",
+            "cacheVariables": {
+                "CMAKE_TOOLCHAIN_FILE": "$env{NDK_HOME}/build/cmake/android.toolchain.cmake",
+                "ANDROID_ABI": "x86_64",
+                "ANDROID_PLATFORM": "android-24"
+            }
+        },
+        {
+            "name": "linux-debug",
+            "displayName": "Linux Debug",
+            "inherits": "base-debug",
+            "binaryDir": "${sourceDir}/build/linux",
+            "condition": {
+                "type": "equals",
+                "lhs": "${hostSystemName}",
+                "rhs": "Linux"
+            }
+        },
+        {
+            "name": "linux-release",
+            "displayName": "Linux Release",
+            "inherits": "base-release",
+            "binaryDir": "${sourceDir}/build/linux",
+            "condition": {
+                "type": "equals",
+                "lhs": "${hostSystemName}",
+                "rhs": "Linux"
+            }
+        },
+        {
+            "name": "windows-debug",
+            "displayName": "Windows MSVC Debug",
+            "inherits": "base-debug",
+            "binaryDir": "${sourceDir}/build/windows",
+            "cacheVariables": {
+                "CMAKE_C_COMPILER": "cl",
+                "CMAKE_CXX_COMPILER": "cl"
+            },
+            "condition": {
+                "type": "equals",
+                "lhs": "${hostSystemName}",
+                "rhs": "Windows"
+            }
+        },
+        {
+            "name": "windows-release",
+            "displayName": "Windows MSVC Release",
+            "inherits": "base-release",
+            "binaryDir": "${sourceDir}/build/windows",
+            "cacheVariables": {
+                "CMAKE_C_COMPILER": "cl",
+                "CMAKE_CXX_COMPILER": "cl"
+            },
+            "condition": {
+                "type": "equals",
+                "lhs": "${hostSystemName}",
+                "rhs": "Windows"
+            }
+        }
+    ]
+}
