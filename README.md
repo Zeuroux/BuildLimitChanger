@@ -3,6 +3,14 @@
 A mod that lets you change the build height and depth limits in Minecraft Bedrock Edition.
 
 [Windows](#windows-minecraft-bedrock) · [Android](#android) · [Server (Windows)](#minecraft-bedrock-server-windows) · [Server (Linux)](#minecraft-bedrock-server-linux)
+> [!NOTE]
+> Launch the game or server with the mod at least once to generate the configuration file.
+
+> [!WARNING]
+> You must edit the config.ini file and rejoin the world for any changes to take effect.
+
+> [!IMPORTANT]
+> Read all comments in the config file before opening an issue or asking for help.
 
 ---
 
