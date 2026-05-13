@@ -1,66 +1,108 @@
 # BuildLimitChanger
 
-A mod to change the build limits of dimensions in Minecraft Bedrock Edition.
+A mod that lets you change the build height and depth limits in Minecraft Bedrock Edition.
+
+[Windows](#windows-minecraft-bedrock) · [Android](#android) · [Server (Windows)](#minecraft-bedrock-server-windows) · [Server (Linux)](#minecraft-bedrock-server-linux)
 
 ---
-## How To Use
 
-### Windows
+# Windows (Minecraft Bedrock)
 
-#### 1. Download the Latest DLL File
+### 1. Download the Mod
 
-- Go to the [**Releases page**](https://github.com/Zeuroux/BuildLimitChanger/releases) to download the latest `.dll` file for Windows.
+* Open the [BuildLimitChanger Releases page](https://github.com/Zeuroux/BuildLimitChanger/releases)
+* Download the latest `.dll` file for Windows.
 
-#### 2. Inject the DLL
+### 2. Inject the DLL
 
-- You can use **any DLL injector**, but i **recomend**  [**FateInjector**](https://github.com/fligger/FateInjector)
-- Steps:
-  1. Launch **Minecraft Bedrock Edition**.  
-  2. Open **FateInjector** (or your preferred injector).  
-  3. Select the the downloaded dll
-  4. Press inject
+You need a DLL injector to load the mod into Minecraft.
 
-#### 3. Configuration location:
-   ```
-   %LOCALAPPDATA%/Packages/Microsoft.MinecraftUWP_8wekyb3d8bbwe/RoamingState/BuildLimitChanger/
-   ```
----
+Recommended injector:
 
-### Android
+* [FateInjector](https://github.com/fligger/FateInjector)
 
-#### 1. Download the Latest SO File
+### 3. Load the Mod
 
-- Go to the [Releases page](https://github.com/Zeuroux/BuildLimitChanger/releases) to download the latest `.so` file.
+1. Start Minecraft Bedrock Edition.
+2. Open FateInjector.
+3. Select the downloaded `.dll` file.
+4. Click **Inject**.
 
-#### 2. Installation
+### Configuration Folder
 
-- **If you are using [LeviLauncher](https://github.com/LiteLDev/LeviLaunchroid):**
-  1. Download the `.so` file.
-  2. Tap the file on your file manager and choose to open with LeviLauncher for import.
-  3. Launch
-
-#### 3. Configuration location:
-   ```
-   /storage/emulated/0/games/BuildLimitChanger/
-   ```
-   or
-   ```
-   /storage/emulated/0/Android/data/[minecraft package name]/BuildLimitChanger/
-   ```
----
-
-### Server (Windows and Linux)
-
-#### 1. Download the Latest Dll (Windows) or SO (Linux) File
-
-- Go to the [Releases page](https://github.com/Zeuroux/BuildLimitChanger/releases) to download the latest one.
-
-#### 2. Inject the DLL or SO
-
-- You can use **any DLL injector**, fate injector will work for windows, you can google so injector cuz idk one
-
-#### 3. Configuration location:
-
-- same location as the executable file of the server (you'll find BuildLimitChanger folder)
+```
+%LOCALAPPDATA%/Packages/Microsoft.MinecraftUWP_8wekyb3d8bbwe/RoamingState/BuildLimitChanger/
+```
 
 ---
+
+# Android
+
+### 1. Download the Mod
+
+* Open the [BuildLimitChanger Releases page](https://github.com/Zeuroux/BuildLimitChanger/releases)
+* Download the latest `.so` file for Android.
+
+### 2. Install with LeviLauncher
+
+If you are using [LeviLauncher](https://github.com/LiteLDev/LeviLaunchroid):
+
+1. Download the `.so` file.
+2. Open your file manager.
+3. Tap the `.so` file.
+4. Choose **Open with LeviLauncher**.
+5. Start Minecraft.
+
+### Configuration Folder
+
+```
+/storage/emulated/0/games/BuildLimitChanger/
+```
+
+---
+
+# Minecraft Bedrock Server (Windows)
+
+### 1. Download the Mod
+
+* Open the [BuildLimitChanger Releases page](https://github.com/Zeuroux/BuildLimitChanger/releases)
+* Download the latest Windows `.dll` file.
+
+### 2. Inject the DLL
+
+Use any DLL injector to load the mod into the server.
+
+Recommended:
+
+* [FateInjector](https://github.com/fligger/FateInjector)
+
+### Configuration Folder
+
+The `BuildLimitChanger` folder will be created in the same folder as the server executable.
+
+---
+
+# Minecraft Bedrock Server (Linux)
+
+### 1. Download the Mod
+
+* Open the [BuildLimitChanger Releases page](https://github.com/Zeuroux/BuildLimitChanger/releases)
+* Download the latest Linux `.so` file.
+
+### 2. Move the File
+
+Place the `.so` file in the same folder as `bedrock_server`.
+
+### 3. Start the Server with the Mod
+
+```bash
+LD_PRELOAD=./linux-x86_64-libBuildLimitChanger.so ./bedrock_server
+```
+
+### Optional: Make It Permanent
+
+You can use `patchelf` so you do not need to use the command above every time you start the server.
+
+### Configuration Folder
+
+The `BuildLimitChanger` folder will appear in the same folder as the server executable.
