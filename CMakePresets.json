@@ -97,8 +97,7 @@
             "inherits": "base-debug",
             "binaryDir": "${sourceDir}/build/windows",
             "cacheVariables": {
-                "CMAKE_C_COMPILER": "cl",
-                "CMAKE_CXX_COMPILER": "cl"
+                "CMAKE_C_COMPILER": "cl"
             },
             "condition": {
                 "type": "equals",
@@ -112,8 +111,7 @@
             "inherits": "base-release",
             "binaryDir": "${sourceDir}/build/windows",
             "cacheVariables": {
-                "CMAKE_C_COMPILER": "cl",
-                "CMAKE_CXX_COMPILER": "cl"
+                "CMAKE_C_COMPILER": "cl"
             },
             "condition": {
                 "type": "equals",
