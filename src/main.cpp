@@ -68,18 +68,12 @@ MOD_API void mod_init() {
 }
 
 #ifdef __ANDROID__
-#include <jni.h>
-#include <dlfcn.h>
-extern "C" JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM* vm, void*) {
-    JNIEnv* env;
-    vm->GetEnv((void**)&env, JNI_VERSION_1_6);
-    if (void* handle = dlopen("libmcpelauncher_mod.so", RTLD_NOW); !handle) {
-        ConfigManager::getInstance().init(ResolveGameStoragePath(env));
+__attribute__((constructor)) void start() {
+    char path[1024];
+    if (getConfigLocation(path, sizeof(path))) {
+        ConfigManager::getInstance().init(path);
         init();
-    } else {
-        dlclose(handle);
     }
-    return JNI_VERSION_1_6;
 }
 #elif defined(_WIN32)
 #define NOMINMAX

@@ -72,8 +72,6 @@ private:
     [[nodiscard]] Section* findSection(std::string_view name);
     [[nodiscard]] const Section* findSection(std::string_view name) const;
     [[nodiscard]] bool sanitiseSections();
-    void refreshIfNeeded();
-    void refreshLastWriteTime();
     void load();
     void save();
     void applyDefaults();

@@ -6,7 +6,7 @@ std::string getExecutableDir();
 
 #if defined(__ANDROID__)
 #include <jni.h>
-std::string ResolveGameStoragePath(JNIEnv* env);
+bool getConfigLocation(char *outPath, size_t outSize);
 #endif
 
 #if defined(_WIN32)

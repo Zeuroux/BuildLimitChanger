@@ -88,31 +88,24 @@ std::string getExecutableDir() {
 }
 
 #if defined(__ANDROID__)
-#define CALL(obj, sig, ...)        env->CallObjectMethod(obj, env->GetMethodID(env->GetObjectClass(obj), sig, __VA_ARGS__))
-#define CALL_STATIC(cls, sig, ...) env->CallStaticObjectMethod(cls, env->GetStaticMethodID(cls, sig, __VA_ARGS__))
+bool getConfigLocation(char *outPath, size_t outSize) {
+    static constexpr size_t kMaxId = 512;
+    char appId[kMaxId] = {};
 
-static std::string AbsPath(JNIEnv* env, jobject file) {
-    auto s = (jstring)CALL(file, "getAbsolutePath", "()Ljava/lang/String;");
-    const char* c = env->GetStringUTFChars(s, nullptr);
-    std::string r(c);
-    env->ReleaseStringUTFChars(s, c);
-    return r;
-}
+    FILE *f = fopen("/proc/self/cmdline", "r");
+    if (!f) return false;
+    size_t n = fread(appId, 1, kMaxId - 1, f);
+    fclose(f);
+    if (n == 0) return false;
 
-std::string ResolveGameStoragePath(JNIEnv* env) {
-    if (auto envCls = env->FindClass("android/os/Environment")) {
-        if (auto dir = CALL_STATIC(envCls, "getExternalStorageDirectory", "()Ljava/io/File;"))
-            return AbsPath(env, dir) + "/games";
+    const char *bases[] = { "/sdcard/games", "/sdcard/Android/media" };
+    for (const char *base : bases) {
+        int written = snprintf(outPath, outSize, "%s/%s/", base, appId);
+        if (written > 0 && (size_t)written < outSize && access(outPath, W_OK) == 0)
+            return true;
     }
 
-    if (auto atCls = env->FindClass("android/app/ActivityThread")) {
-        auto at  = CALL_STATIC(atCls, "currentActivityThread", "()Landroid/app/ActivityThread;");
-        auto app = at   ? CALL(at,  "getApplication",    "()Landroid/app/Application;")              : nullptr;
-        auto file = app ? CALL(app, "getExternalFilesDir", "(Ljava/lang/String;)Ljava/io/File;") : nullptr;
-        if (file) return AbsPath(env, file);
-    }
-
-    return "/data/data/com.mojang.minecraftpe";
+    return false;
 }
 #endif
 
