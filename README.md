@@ -41,7 +41,10 @@ Recommended injector:
 ```
 %LOCALAPPDATA%/Packages/Microsoft.MinecraftUWP_8wekyb3d8bbwe/RoamingState/BuildLimitChanger/
 ```
-
+Or for preview:
+```
+%LOCALAPPDATA%/Packages/Microsoft.MinecraftWindowsBeta_8wekyb3d8bbwe/RoamingState/BuildLimitChanger/
+```
 ---
 
 # Android
@@ -65,6 +68,10 @@ If you are using [LeviLauncher](https://github.com/LiteLDev/LeviLaunchroid):
 
 ```
 /storage/emulated/0/games/BuildLimitChanger/
+```
+Or
+```
+/storage/emulated/0/Android/media/(launcher)/BuildLimitChanger/
 ```
 
 ---
