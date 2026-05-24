@@ -56,13 +56,14 @@ Or for preview:
 
 ### 2. Install with LeviLauncher
 
-If you are using [LeviLauncher](https://github.com/LiteLDev/LeviLaunchroid):
+If you are using [LeviLauncher](https://github.com/LiteLDev/LeviLaunchroid) or [Ambient](https://play.google.com/store/apps/details?id=io.kitsuri.mayape):
 
 1. Download the `.so` file.
 2. Open your file manager.
 3. Tap the `.so` file.
-4. Choose **Open with LeviLauncher**.
-5. Start Minecraft.
+4. Choose **Open with (Launcher)**.
+5. Launch.
+6. Modify the generated config once in the launcher screen.
 
 ### Configuration Folder
 
