@@ -54,7 +54,7 @@ Or for preview:
 * Open the [BuildLimitChanger Releases page](https://github.com/Zeuroux/BuildLimitChanger/releases)
 * Download the latest `.so` file for Android.
 
-### 2. Install with Levi
+### 2. Install with a Launcher
 
 If you are using [Levi](https://github.com/LiteLDev/LeviLaunchroid) or [Ambient](https://play.google.com/store/apps/details?id=io.kitsuri.mayape):
 
